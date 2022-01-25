@@ -2,7 +2,7 @@
 ## Running the Container:
 `docker-compose up -d`
 
-The SQL script `init.sql` is defined as entrypoint, it creates the tables.
+The SQL script `init.sql` is defined as entrypoint, it creates the necessary tables.
 ## Using phpmyadmin web interface
 open http://localhost:8081 and log in.
 
