@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS positions
     y FLOAT NOT NULL,
     z FLOAT NOT NULL,
     timestamp INT NOT NULL
-);
+) ENGINE=InnoDB;

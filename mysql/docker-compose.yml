@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   db:
-    image: dronelab_mysql:latest
+    image: mysql/mysql-server:8.0.28
     restart: unless-stopped
     container_name: mysql
     environment:
@@ -14,6 +14,8 @@ services:
       - "3306"
     ports:
       - "3306:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/0_init.sql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.1
     restart: unless-stopped
