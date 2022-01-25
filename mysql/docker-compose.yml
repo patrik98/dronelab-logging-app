@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  db:
+    image: dronelab_mysql:latest
+    restart: unless-stopped
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cs_db
+      MYSQL_USER: cs
+      MYSQL_PASSWORD: cs123
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.1.1
+    restart: unless-stopped
+    container_name: phpmyadmin
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    expose:
+      - "80"
+    ports:
+      - "8081:80"
