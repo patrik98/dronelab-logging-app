@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS positions
     x FLOAT NOT NULL,
     y FLOAT NOT NULL,
     z FLOAT NOT NULL,
-    timestamp INT NOT NULL,
+    ts BIGINT NOT NULL,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB;
