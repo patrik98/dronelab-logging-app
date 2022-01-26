@@ -24,7 +24,7 @@ class DBHelper:
         self._config = {
             "user": "cs",
             "pw": "cs123",
-            "host": "127.0.0.1",
+            "host": "db",
             "port": 3306,
             "db": "cs_db"
         }
@@ -188,3 +188,5 @@ class SessionID:
         """
         return self.id_string[8:]
 
+db = DBHelper()
+print(db.get_unique_session_ids())

@@ -10,12 +10,10 @@ services:
       MYSQL_DATABASE: cs_db
       MYSQL_USER: cs
       MYSQL_PASSWORD: cs123
-    expose:
-      - "3306"
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/0_init.sql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/0_init.sql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.1
     restart: unless-stopped
@@ -30,3 +28,13 @@ services:
       - "80"
     ports:
       - "8081:80"
+  logapp:
+    build: streamlit_app/.
+    restart: unless-stopped
+    container_name: logapp
+    links:
+      - db
+    expose:
+      - "8501"
+    ports:
+      - "8501:8501"
