@@ -4,9 +4,6 @@ import pandas as pd
 from pandas.core.frame import DataFrame
 from .model import Position
 
-"""
-https://dev.mysql.com/doc/connector-python/en/connector-python-introduction.html
-"""
 class Database:
     """
     Class to handle database connection and operations
@@ -53,14 +50,14 @@ class Database:
         inserts a record list into to db and clears the positions list in the internal object list
         """
         with self.session as session:
-                try:
-                    session.add_all(self.positions)
-                except db.exc.SQLAlchemyError as err:
-                    session.rollback()
-                    print(err)
-                else:
-                    session.commit()
-                    self.positions.clear()
+            try:
+                session.add_all(self.positions)
+            except db.exc.SQLAlchemyError as err:
+                session.rollback()
+                print(err)
+            else:
+                session.commit()
+                self.positions.clear()
     
 
     def insert(self, p):
