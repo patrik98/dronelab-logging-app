@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Float
+from sqlalchemy import Column, String, Integer, Float, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -21,5 +21,5 @@ class Position(Base):
     x = Column(Float)
     y = Column(Float)
     z = Column(Float)
-    timestamp = Column(Integer)
+    ts = Column(BigInteger)
 
