@@ -125,10 +125,10 @@ class Database:
         @param session_id: session id as string
         @return: list of cfs
         """
-        query = """SELECT DISTINCT crazyflie_id, timestamp
+        query = """SELECT DISTINCT crazyflie_id, ts
                 FROM positions
                 WHERE session_id='{}'
-                ORDER BY timestamp ASC;
+                ORDER BY ts ASC;
                 """
         return pd.read_sql_query(query.format(str(session_id)), self.engine)['crazyflie_id'].tolist()
 
@@ -154,7 +154,7 @@ class Database:
         query = """SELECT * FROM positions
                 WHERE session_id='{}'
                 AND crazyflie_id IN ({})
-                ORDER BY timestamp ASC;
+                ORDER BY ts ASC;
                 """
         return pd.read_sql_query(query.format(str(session_id), cf_ids_param), self.engine)
 
