@@ -24,7 +24,7 @@ class DBHelper:
         self._config = {
             "user": "cs",
             "pw": "cs123",
-            "host": "db",
+            "host": "mysql",
             "port": 3306,
             "db": "cs_db"
         }
