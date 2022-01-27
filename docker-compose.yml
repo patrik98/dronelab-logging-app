@@ -10,8 +10,9 @@ services:
       MYSQL_DATABASE: cs_db
       MYSQL_USER: cs
       MYSQL_PASSWORD: cs123
+      MYSQL_ROOT_HOST: '80.93.46.242' # only allow to connect as root from server or via vpn
     ports:
-      - "3307:3306"
+      - "13307:3306"
     volumes:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/0_init.sql
   phpmyadmin:
@@ -37,4 +38,4 @@ services:
     expose:
       - "8501"
     ports:
-      - "8501:8501"
+      - "80:8501"
