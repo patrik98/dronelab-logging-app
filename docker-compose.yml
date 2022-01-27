@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: cs_db
       MYSQL_USER: cs
       MYSQL_PASSWORD: cs123
-      MYSQL_ROOT_HOST: '80.93.46.242' # only allow to connect as root from server or via vpn
+      MYSQL_ROOT_HOST: '%' # wildcard to allow anyone IP to connect as root
     ports:
       - "13307:3306"
     volumes:
