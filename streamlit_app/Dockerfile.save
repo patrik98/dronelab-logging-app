@@ -1,4 +1,4 @@
-# use the python 3.8 image
+'server.enableXsrfProtection=true'# use the python 3.8 image
 FROM python:3.8
 
 # set a working directory for the app
@@ -11,7 +11,7 @@ COPY app/requirements.txt ./requirements.txt
 RUN pip install -r ./requirements.txt
 
 # copy the config file to the respective place in the dockerfile 
-COPY config.toml /root/.streamlit/config.toml
+COPY config.toml ~/.streamlit/config.toml.
 
 # expose the port
 EXPOSE 8501
