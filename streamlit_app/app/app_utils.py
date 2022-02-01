@@ -113,7 +113,7 @@ class DBHelper:
         query = f"""SELECT * FROM positions
                         WHERE session_id='{session_id}'
                         AND crazyflie_id IN ({cf_ids_param})
-                        ORDER BY timestamp ASC;
+                        ORDER BY ts ASC;
                         """
         res = pd.read_sql_query(query, self._engine)
         return res
