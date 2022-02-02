@@ -1,7 +1,5 @@
 import plotly.express as px
-import sqlalchemy
-import pandas as pd
-
+from streamlit_app.app.dronelab_mysql.db import Database
 
 def create_3d_plot(data):
     """
@@ -19,23 +17,24 @@ class DBHelper:
     def __init__(self):
         """
         initializes the Helper object be defining the database location
-        @param db_name: the name/path to the database as string
+        @param config: dictionary with the database connection config.
+                       example:
+            {
+            'host': '127.0.0.1',
+            'port': 3306,
+            'user': 'user',
+            'password': 'pw',
+            'database': 'db'
+            }
         """
-        self._config = {
+        config = {
             "user": "cs",
             "pw": "cs123",
             "host": "mysql",
             "port": 3306,
             "db": "cs_db"
         }
-        connection_string = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8mb4'.format(
-            self._config['user'],
-            self._config['pw'],
-            self._config['host'],
-            self._config['port'],
-            self._config['db'])
-
-        self._engine = sqlalchemy.create_engine(connection_string)
+        self.db = Database(config=config)
 
     def get_session_data(self, session_id):
         """
@@ -43,18 +42,14 @@ class DBHelper:
         @param session_id: the session id of interest
         @return:
         """
-        res = pd.read_sql_query('SELECT * FROM positions WHERE session_id={};'.format(session_id), self._engine)
-
-        return res
+        return self.db.get_session_data(session_id)
 
     def get_unique_session_ids(self):
         """
         all unique session ids present in the database
-        @return:
+        @return: the session ids as a list of strings
         """
-        session_ids = pd.read_sql_query('SELECT DISTINCT session_id FROM positions;', self._engine)[
-            'session_id'].tolist()
-        return session_ids
+        return self.db.get_unique_session_ids()
 
     @staticmethod
     def to_integer(dt_time):
@@ -82,15 +77,7 @@ class DBHelper:
         @param session_id: session_id as a string(caution!)
         @return: a list of cf ids
         """
-        session_id = str(session_id)
-        res = pd.read_sql_query(
-            "SELECT DISTINCT crazyflie_id FROM positions WHERE session_id={}".format(session_id),
-            self._engine
-        )
-
-        res = res['crazyflie_id'].tolist()
-
-        return res
+        return self.db.get_all_cfs_in_session(session_id)
 
     def get_cfs_data_from_session(self, session_id, crazyflie_ids):
         """
@@ -99,24 +86,7 @@ class DBHelper:
         @param cf_list: a list with strings of cf ids
         @return a pandas df with all cols
         """
-        cf_ids_param = f'"{crazyflie_ids[0]}"'
-        cf_ids_length = len(crazyflie_ids)
-
-        if cf_ids_length > 1:
-            cf_ids_param = ''
-            for cf_id in crazyflie_ids:
-                if crazyflie_ids.index(cf_id) != cf_ids_length - 1:
-                    cf_ids_param += f'"{cf_id}",'
-                else:
-                    cf_ids_param += f'"{cf_id}"'
-
-        query = f"""SELECT * FROM positions
-                        WHERE session_id='{session_id}'
-                        AND crazyflie_id IN ({cf_ids_param})
-                        ORDER BY ts ASC;
-                        """
-        res = pd.read_sql_query(query, self._engine)
-        return res
+        return self.db.get_cfs_data_from_session(session_id=session_id, crazyflie_ids=crazyflie_ids)
 
 
 class SessionID:
@@ -143,7 +113,7 @@ class SessionID:
         else:
             if int(other.get_sess_num()) <= int(self.get_sess_num()):
                 return False
-            elif int(other.get_sess_num()) < int(self.get_sess_num()):
+            elif int(other.get_sess_num()) > int(self.get_sess_num()):
                 return True
 
     def __eq__(self, other):
@@ -153,7 +123,7 @@ class SessionID:
         @return: True if same else False
         """
         if other.id_string == self.id_string:
-            return
+            return True
         else:
             return False
 
@@ -169,9 +139,19 @@ class SessionID:
     def create_sess_id(self, date, sess_num):
         """
         inserts the session id string for the object based on the date and a session number
-        @param date:
-        @param sess_num:
+        @param date: date as string
+        @param sess_num: string
         """
+
+        # test if string consists of integegers
+        try:
+            int(date)
+        except ValueError:
+            raise ValueError("the date should be a string of 8 integers!")
+
+        if len(date) != 8:
+            raise ValueError("the date should be a string of 8 integers!")
+
         self.id_string = date + sess_num
 
     def get_date(self):
@@ -187,6 +167,3 @@ class SessionID:
         @return: a string with the number
         """
         return self.id_string[8:]
-
-db = DBHelper()
-print(db.get_unique_session_ids())
