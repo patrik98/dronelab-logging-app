@@ -15,7 +15,7 @@ publish:
     - echo $CI_REGISTRY_IMAGE
     - echo $CI_COMMIT_REF_NAME
     - echo $CI_COMMIT_SHORT_SHA
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker login -u jBialas -p glpat-8WeJsC7Mue1UW6bJdw5r $CI_REGISTRY
     - docker build -t gcr.web.fh-kufstein.ac.at/golecpatrik/dronelab-logging-app -f streamlit_app/Dockerfile .
     - echo "logging in:"
     - docker push $TAG_COMMIT
