@@ -14,8 +14,6 @@ services:
       MYSQL_ROOT_HOST: '%' # wildcard to allow anyone IP to connect as root
     ports:
       - "3307:3306"
-    volumes:
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/0_init.sql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.1
     restart: unless-stopped
