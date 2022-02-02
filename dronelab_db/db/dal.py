@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 import pandas as pd
-from models.models import Base, Position
+from dronelab_db.models.models import Base, Position
 
 class DataAccessLayer():
     def __init__(self):
