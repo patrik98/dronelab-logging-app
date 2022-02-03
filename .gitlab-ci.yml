@@ -33,7 +33,7 @@ deploy:
     - docker tag $TAG_COMMIT $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:production
     - docker container rm -f logapp || true
     - docker images
-    - docker run -d -p 80:8501 --name dronelab-logging-app_logapp $TAG_COMMIT"
+    - docker run -d -p 80:8501 --name logapp $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:production
   environment:
     name: production
     url: http://80.93.46.242
