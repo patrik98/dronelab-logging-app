@@ -1,5 +1,6 @@
 stages:
-  - publish
+  - build
+  - test
   - deploy
 
 variables:
@@ -7,9 +8,9 @@ variables:
   TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
   DOCKER_TLS_CERTDIR: "/certs"
 
-publish:
+build:
   image: docker:18.09
-  stage: publish
+  stage: build
   services:
     - docker:18.09-dind
   script:
@@ -21,6 +22,18 @@ publish:
   environment:
     name: production
     url: http://80.93.46.242
+
+pytest:
+  stage: test
+  image: python:3.8
+  before_script:
+    - pip install -r streamlit_app/app/requirements.txt
+  script:
+    - python -m unittest discover tests -v
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
 
 deploy:
   image: docker:18.09
