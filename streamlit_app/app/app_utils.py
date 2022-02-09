@@ -1,5 +1,7 @@
 import plotly.express as px
-from streamlit_app.app.dronelab_mysql.db import Database
+from dronelab_mysql.db import Database
+import numpy as np
+from dronelab_mysql.model import Position
 
 def create_3d_plot(data):
     """
@@ -29,10 +31,10 @@ class DBHelper:
         """
         config = {
             "user": "cs",
-            "pw": "cs123",
+            "password": "cs123",
             "host": "mysql",
             "port": 3306,
-            "db": "cs_db"
+            "database": "cs_db"
         }
         self.db = Database(config=config)
 
@@ -87,6 +89,26 @@ class DBHelper:
         @return a pandas df with all cols
         """
         return self.db.get_cfs_data_from_session(session_id=session_id, crazyflie_ids=crazyflie_ids)
+
+    def create_mock_session(self):
+        cf_id = 1000 * ["cf1"]
+        session_id = 1000 * ["202202091"]
+        timestamp = 123456789 + np.linspace(0, 10000, 1000, dtype="uint")
+        x = []
+        y = []
+        z = []
+        for i in range(1000):
+            z.append(i*0.01)
+            x.append(np.cos(i/100 * np.pi))
+            y.append(np.sin(i / 100 * np.pi))
+
+        for i in range(1000):
+            self.db.insert(Position(session_id=session_id[i],
+                                    crazyflie_id=cf_id[i],
+                                    x=x[i],
+                                    y=y[i],
+                                    z=z[i],
+                                    timestamp=int(timestamp[i])))
 
 
 class SessionID:
@@ -167,3 +189,8 @@ class SessionID:
         @return: a string with the number
         """
         return self.id_string[8:]
+
+
+
+
+

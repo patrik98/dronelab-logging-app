@@ -10,7 +10,7 @@ COPY app/requirements.txt ./requirements.txt
 # install all requirements
 RUN pip install -r ./requirements.txt
 
-# copy the config file to the respective place in the dockerfile
+# copy the config file to the respective place in the dockerfile 
 COPY config.toml /root/.streamlit/config.toml
 
 # expose the port
