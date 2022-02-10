@@ -21,5 +21,5 @@ class Position(Base):
     x = Column(Float)
     y = Column(Float)
     z = Column(Float)
-    ts = Column(BigInteger)
+    timestamp = Column(BigInteger)
 

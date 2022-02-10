@@ -29,7 +29,7 @@ services:
     ports:
       - "8081:80"
   logapp:
-    build: streamlit_app/.
+    build: .
     restart: unless-stopped
     container_name: logapp
     links:
