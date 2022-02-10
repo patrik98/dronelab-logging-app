@@ -1,5 +1,5 @@
 import unittest
-from ..app.app_utils import SessionID
+from app_utils import SessionID
 
 class TestSessionIDMethods(unittest.TestCase):
 

@@ -13,6 +13,8 @@ pytest:
   image: python:3.8
   before_script:
     - pip install -r app/requirements.txt
+    - cp tests/* -r app
+    - rm -rf tests
   script:
     - python -m unittest discover tests -v
   artifacts:
