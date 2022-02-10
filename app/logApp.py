@@ -7,7 +7,8 @@ st.title("Crazyswarm Logging")
 db = DBHelper()
 
 # ---------------------------------------- Sidebar --------------------------------------------------
-st.sidebar.image("logo.png", use_column_width=True)
+
+st.sidebar.image("app/logo.png", use_column_width=True)
 st.sidebar.text(" ")
 st.sidebar.text(" ")
 st.sidebar.text(" ")

@@ -11,7 +11,15 @@ def create_3d_plot(data):
     @param cf_id: crazyflie id
     @return: a 3D plotly figure
     """
-    fig = px.line_3d(data, x="x", y="y", z="z", color="crazyflie_id")
+    fig = px.line_3d(data,
+                     x="x",
+                     y="y",
+                     z="z",
+                     color="crazyflie_id",
+                     labels={
+                         "crazyflie": "crazyflie_id", "time": "timestamp"
+                     }
+                     )
     return fig
 
 

@@ -12,7 +12,7 @@ pytest:
   stage: test
   image: python:3.8
   before_script:
-    - pip install -r streamlit_app/app/requirements.txt
+    - pip install -r app/requirements.txt
   script:
     - python -m unittest discover tests -v
   artifacts:
@@ -26,7 +26,6 @@ publish:
     - docker:18.09-dind
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - cd streamlit_app
     - docker build -t $TAG_COMMIT -t $TAG_LATEST .
     - docker push $TAG_COMMIT
     - docker push $TAG_LATEST
