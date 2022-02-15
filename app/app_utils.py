@@ -98,7 +98,7 @@ class DBHelper:
         @param cf_list: a list with strings of cf ids
         @return a pandas df with all cols
         """
-        return self.db.get_cfs_data_from_session(session_id=session_id, crazyflie_ids=crazyflie_ids)
+        return self.db.get_cfs_data_from_session(session=session_id, crazyflie_ids=crazyflie_ids)
 
     def create_mock_session(self):
         cf_id = 1000 * ["cf1"]

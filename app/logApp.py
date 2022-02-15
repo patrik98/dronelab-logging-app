@@ -60,7 +60,7 @@ if st.session_state.vis_button_clicked and session_oi:
 
         if not filtered_data.empty:
             # timeslider
-            time_col = filtered_data.timestamp
+            time_col = filtered_data.ts
             min_time = min(time_col)
             max_time = max(time_col)
             time_oi = st.slider(max_value=max_time - min_time,
