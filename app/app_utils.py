@@ -1,7 +1,7 @@
 import plotly.express as px
-from dronelab_mysql.db import Database
 import numpy as np
-from dronelab_mysql.model import Position
+from dronelab_db.data.dal import DataAccessLayer
+from dronelab_db.models.position import Position
 
 def create_3d_plot(data):
     """
@@ -44,7 +44,9 @@ class DBHelper:
             "port": 3306,
             "database": "cs_db"
         }
-        self.db = Database(config=config)
+        conn_string = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8mb4'.format(
+        config['user'], config['password'], config['host'], config['port'], config['database'])
+        self.db = DataAccessLayer(conn_string=conn_string, insert_limit=16)
 
     def get_session_data(self, session_id):
         """
@@ -59,7 +61,7 @@ class DBHelper:
         all unique session ids present in the database
         @return: the session ids as a list of strings
         """
-        return self.db.get_unique_session_ids()
+        return self.db.get_unique_sessions()
 
     @staticmethod
     def to_integer(dt_time):
@@ -96,7 +98,7 @@ class DBHelper:
         @param cf_list: a list with strings of cf ids
         @return a pandas df with all cols
         """
-        return self.db.get_cfs_data_from_session(session_id=session_id, crazyflie_ids=crazyflie_ids)
+        return self.db.get_cfs_data_from_session(session=session_id, crazyflie_ids=crazyflie_ids)
 
     def create_mock_session(self):
         """

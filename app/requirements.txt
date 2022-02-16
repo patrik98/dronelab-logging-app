@@ -4,3 +4,4 @@ pandas
 streamlit==1.5.0
 pymysql
 cryptography
+dronelab-db-lib

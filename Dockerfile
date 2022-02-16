@@ -8,8 +8,11 @@ WORKDIR /
 # copy all app code to the app directory
 COPY ./app app/
 
+# ARG to hold Gitlab Access Token
+ARG GITLAB_TOKEN
+
 # install all requirements
-RUN pip install -r app/requirements.txt
+RUN pip install -r app/requirements.txt --extra-index-url https://__token__:${GITLAB_TOKEN}@gitlab.web.fh-kufstein.ac.at/api/v4/projects/4223/packages/pypi/simple
 
 # copy the config file to the respective place in the dockerfile 
 COPY config.toml /root/.streamlit/config.toml
