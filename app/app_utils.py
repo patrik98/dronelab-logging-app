@@ -99,9 +99,12 @@ class DBHelper:
         return self.db.get_cfs_data_from_session(session_id=session_id, crazyflie_ids=crazyflie_ids)
 
     def create_mock_session(self):
+        """
+        Inserts some mock data into the database (trajectory of single cf is rising in circles)
+        """
         cf_id = 1000 * ["cf1"]
         session_id = 1000 * ["202202091"]
-        timestamp = 123456789 + np.linspace(0, 10000, 1000, dtype="uint")
+        timestamp = 123456789 + np.linspace(1644941473598754048, 1644941474398963712, 1000, dtype="uint")
         x = []
         y = []
         z = []
@@ -116,7 +119,12 @@ class DBHelper:
                                     x=x[i],
                                     y=y[i],
                                     z=z[i],
-                                    timestamp=int(timestamp[i])))
+                                    timestamp=int(timestamp[i]),
+                                    position=i))
+
+    @staticmethod
+    def timestamp_to_ms(ts):
+        return int(str(int(ts))[:12])
 
 
 class SessionID:
