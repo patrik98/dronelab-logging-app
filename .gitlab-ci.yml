@@ -1,17 +1,21 @@
 stages:
   - test
-  - publish
+  - build
   - deploy
-
-variables:
-  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
-  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
-  DOCKER_TLS_CERTDIR: "/certs"
 
 pytest:
   stage: test
   image: python:3.8
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+      - .cache/pip
+      - venv/
   before_script:
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
     - pip install -r app/requirements.txt --extra-index-url https://__token__:$DB_LIB_API_TOKEN@gitlab.web.fh-kufstein.ac.at/api/v4/projects/4223/packages/pypi/simple
     - cp tests/* -r app
     - rm -rf tests
@@ -19,38 +23,37 @@ pytest:
     - python -m unittest discover app -v
   artifacts:
     when: always
-
-
-publish:
-  image: docker:18.09
-  stage: publish
-  services:
-    - docker:18.09-dind
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - docker build -t $TAG_COMMIT -t $TAG_LATEST --build-arg GITLAB_TOKEN="$DB_LIB_API_TOKEN" .
-    - docker push $TAG_COMMIT
-    - docker push $TAG_LATEST
-  environment:
-    name: production
-    url: http://80.93.46.242
-
-deploy:
-  image: docker:18.09
-  stage: deploy
   tags:
-    - deployment
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - docker pull $TAG_COMMIT
-    - docker tag $TAG_COMMIT $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:production
-    - docker container rm -f logapp || true
-    - docker images
-    - docker run -d -p 80:8501 --name logapp $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:production
-  environment:
-    name: production
-    url: http://80.93.46.242
+    - docker
   only:
     - master
-    - main
 
+build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --build-arg "GITLAB_TOKEN=$DB_LIB_API_TOKEN"
+      --destination "${CI_REGISTRY_IMAGE}:latest"
+  tags:
+    - docker
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:latest
+    - docker-compose down && docker-compose up -d
+  tags:
+    - deployment
+  only:
+    - master
