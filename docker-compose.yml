@@ -32,7 +32,7 @@ services:
     build:
       context: .
       args:
-        GITLAB_TOKEN: ${GITLAB_TOKEN}
+        GITLAB_TOKEN: $GITLAB_TOKEN
     restart: unless-stopped
     container_name: logapp
     links:

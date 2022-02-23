@@ -38,14 +38,17 @@ if plot_option_button:
     st.session_state.vis_button_clicked = True
 
 if st.session_state.vis_button_clicked and session_oi:
-    # print the matadata of the respective session
-    st.header("Metadata:")
-    st.text("TODO: Metadata here") # TODO: print the metadata of the session
+    # get data of interest from database
+    session_data = db.get_session_data(session_oi)
+    roslog_data = db.get_roslogs_in_session(session_id=session_oi)
     crazyflies = db.get_all_cfs_in_session(session_oi)
     selected_cfs = st.multiselect(label="select crazyflies of interest:", options=crazyflies)
 
-    # get data of interest from database
-    session_data = db.get_cfs_data_from_session(session_oi, crazyflies)
+    # print the matadata of the respective session
+    st.header("Metadata:")
+    if not session_data.empty:
+        st.text("Duration: {}".format(str(max(session_data.ts) - min(session_data.ts))))
+        st.text("Number of Crazyflies: {}".format(str(len(crazyflies))))
 
     # output plot
     st.header("Plot:")
@@ -64,16 +67,23 @@ if st.session_state.vis_button_clicked and session_oi:
             time_col = filtered_data.ts
             min_time = min(time_col)
             max_time = max(time_col)
-            time_oi = st.slider(max_value=max_time - min_time,
-                                min_value=0,
-                                value=max_time - min_time,
+            time_oi = st.slider(max_value=max_time,
+                                min_value=min_time,
+                                value=max_time,
                                 label="Time Threshold (miliseconds from start)",
                                 )
-            filtered_data = filtered_data.loc[time_col < (time_oi + min_time)]
+            filtered_data = filtered_data.loc[time_col < time_oi]
             fig = create_3d_plot(data=filtered_data)
             st.plotly_chart(fig, use_container_width=True)
 
-
+            if not roslog_data.empty:
+                st.header("Roslogs:")
+                time_col = roslog_data.ts
+                roslog_data_filtered = roslog_data.loc[[(time_oi - 10) < ts < (time_oi + 10) for ts in time_col]]
+                for msg in roslog_data_filtered.msg:
+                    st.write(msg)
 
         else:
             st.text("No session data, are you sure you selected crazyflies?")
+
+
