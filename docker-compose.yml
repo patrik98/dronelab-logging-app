@@ -14,6 +14,9 @@ services:
       MYSQL_ROOT_HOST: '%' # wildcard to allow anyone IP to connect as root
     ports:
       - "3307:3306"
+    volumes:
+      - /opt/containers/mysql/conf.d:/etc/mysql/conf.d
+      - /opt/containers/mysql/data:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.1
     restart: unless-stopped
