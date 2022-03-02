@@ -16,3 +16,6 @@ Build Dockerfile:
 ## Run locally
 Run in detached mode:  
 `docker-compose up -d`
+
+# Architecture
+![](diagrams/architecture.png)

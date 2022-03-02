@@ -1,7 +1,7 @@
 import plotly.express as px
 import numpy as np
 from dronelab_db.data.dal import DataAccessLayer
-from dronelab_db.models.position import Position
+import pandas as pd
 
 def create_3d_plot(data):
     """
@@ -23,6 +23,7 @@ def create_3d_plot(data):
     return fig
 
 
+
 class DBHelper:
     def __init__(self):
         """
@@ -38,15 +39,19 @@ class DBHelper:
             }
         """
         config = {
-            "user": "cs",
-            "password": "cs123",
-            "host": "mysql",
-            "port": 3306,
-            "database": "cs_db"
+            'host': '80.93.46.242',
+            'port': 13307,
+            # 'host': 'mysql',
+            # 'port': 3306,
+            'user': 'cs',
+            'password': 'cs123',
+            'database': 'cs_db'
         }
+
         conn_string = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8mb4'.format(
         config['user'], config['password'], config['host'], config['port'], config['database'])
         self.db = DataAccessLayer(conn_string=conn_string, insert_limit=16)
+
 
     def get_session_data(self, session_id):
         """
@@ -91,6 +96,9 @@ class DBHelper:
         """
         return self.db.get_all_cfs_in_session(session_id)
 
+    def get_roslogs_in_session(self, session_id):
+        return self.db.get_roslogs_from_session(session_id)
+
     def get_cfs_data_from_session(self, session_id, crazyflie_ids):
         """
         quries all data within a session for a selected list of cfs
@@ -100,13 +108,26 @@ class DBHelper:
         """
         return self.db.get_cfs_data_from_session(session=session_id, crazyflie_ids=crazyflie_ids)
 
-    def create_mock_session(self):
+    @staticmethod
+    def get_mock_roslogs():
+        timestamp = np.linspace(164494147359, 164494147739, 1000).astype("int64").tolist()
+        logs = ["test + {}".format(str(i)) for i in range(1000)]
+        session_id = 1000 * ["202202091"]
+        df = pd.DataFrame({
+            "ts": timestamp,
+            "msg": logs,
+            "session_id": session_id
+        })
+        return df
+
+    @staticmethod
+    def create_mock_session():
         """
         Inserts some mock data into the database (trajectory of single cf is rising in circles)
         """
         cf_id = 1000 * ["cf1"]
         session_id = 1000 * ["202202091"]
-        timestamp = 123456789 + np.linspace(1644941473598754048, 1644941474398963712, 1000, dtype="uint")
+        timestamp = np.linspace(164494147359, 164494147739, 1000).astype("int64").tolist()
         x = []
         y = []
         z = []
@@ -115,14 +136,23 @@ class DBHelper:
             x.append(np.cos(i/100 * np.pi))
             y.append(np.sin(i / 100 * np.pi))
 
-        for i in range(1000):
-            self.db.insert(Position(session_id=session_id[i],
-                                    crazyflie_id=cf_id[i],
-                                    x=x[i],
-                                    y=y[i],
-                                    z=z[i],
-                                    timestamp=int(timestamp[i]),
-                                    position=i))
+        df = pd.DataFrame({
+            "crazyflie_id": cf_id,
+            "ts": timestamp,
+            "x": x,
+            "y": y,
+            "z": z,
+            "session_id": session_id
+        })
+        return df
+
+#        for i in range(1000):
+#            self.db.insert_position(Position(session_id=session_id[i],
+#                                    crazyflie_id=cf_id[i],
+#                                    x=x[i],
+#                                    y=y[i],
+#                                    z=z[i],
+#                                    ts=int(timestamp[i])))
 
     @staticmethod
     def timestamp_to_ms(ts):
