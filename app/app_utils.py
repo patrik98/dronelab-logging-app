@@ -39,12 +39,15 @@ class DBHelper:
             }
         """
         config = {
-            "user": "cs",
-            "password": "cs123",
-            "host": "mysql",
-            "port": 3306,
-            "database": "cs_db"
+            'host': '80.93.46.242',
+            'port': 13307,
+            # 'host': 'mysql',
+            # 'port': 3306,
+            'user': 'cs',
+            'password': 'cs123',
+            'database': 'cs_db'
         }
+
         conn_string = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8mb4'.format(
         config['user'], config['password'], config['host'], config['port'], config['database'])
         self.db = DataAccessLayer(conn_string=conn_string, insert_limit=16)
