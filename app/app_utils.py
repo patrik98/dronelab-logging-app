@@ -39,10 +39,8 @@ class DBHelper:
             }
         """
         config = {
-            'host': '80.93.46.242',
-            'port': 13307,
-            # 'host': 'mysql',
-            # 'port': 3306,
+            'host': 'mysql',
+            'port': 3306,
             'user': 'cs',
             'password': 'cs123',
             'database': 'cs_db'
