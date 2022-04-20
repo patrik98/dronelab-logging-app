@@ -79,7 +79,7 @@ if st.session_state.vis_button_clicked and session_oi:
             if not roslog_data.empty:
                 st.header("Roslogs:")
                 time_col = roslog_data.ts
-                roslog_data_filtered = roslog_data.loc[[(time_oi - 10) < ts < (time_oi + 10) for ts in time_col]]
+                roslog_data_filtered = roslog_data.loc[[(time_oi - 100) < ts < (time_oi + 100) for ts in time_col]]
                 for msg in roslog_data_filtered.msg:
                     st.write(msg)
 
