@@ -1,7 +1,7 @@
 plotly
 sqlalchemy
 pandas
-streamlit==1.5.0
+streamlit==1.8.1
 pymysql
 cryptography
 dronelab-db-lib
