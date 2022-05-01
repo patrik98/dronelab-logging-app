@@ -11,12 +11,12 @@ services:
       MYSQL_DATABASE: cs_db
       MYSQL_USER: cs
       MYSQL_PASSWORD: cs123
-#      MYSQL_ROOT_HOST: '%' # wildcard to allow anyone IP to connect as root
+      MYSQL_ROOT_HOST: '%' # wildcard to allow anyone IP to connect as root
     ports:
       - "3307:3306"
-    volumes:
-      - /opt/containers/mysql/conf.d:/etc/mysql/conf.d
-      - /opt/containers/mysql/data:/var/lib/mysql
+    # volumes:
+    #   - /opt/containers/mysql/conf.d:/etc/mysql/conf.d
+    #   - /opt/containers/mysql/data:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.1.1
     restart: unless-stopped
@@ -26,7 +26,8 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      PMA_ARBITRARY: 1
+      # PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 1000M
     expose:
       - "80"
     ports:
@@ -40,5 +41,5 @@ services:
     expose:
       - "8501"
     ports:
-      - "80:8501"
+      - "8085:8501"
 
