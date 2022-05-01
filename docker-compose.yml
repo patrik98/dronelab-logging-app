@@ -32,7 +32,7 @@ services:
     ports:
       - "8081:80"
   logapp:
-    image: gcr.web.fh-kufstein.ac.at/golecpatrik/dronelab-logging-app:latest
+    image: gcr.web.fh-kufstein.ac.at/fh-dronelab/dronelab-logging-app
     restart: unless-stopped
     container_name: logapp
     links:
